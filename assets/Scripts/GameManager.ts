@@ -34,6 +34,7 @@ export class GameManager extends Component {
 
     start() {
         this.setCurState(GameState.GS_INIT); // Thiết lập trạng thái ban đầu là GS_INIT
+        this.playerCtrl?.node.on('JumpEnd', this.onPlayerJumpEnd, this);
     }
 
     // update(dt: number): void {
@@ -121,6 +122,25 @@ export class GameManager extends Component {
 
     onStartButtonClicked() {
         this.setCurState(GameState.GS_PLAYING); // Chuyển sang trạng thái GS_PLAYING khi nút bắt đầu được nhấn
+    }
+
+    onPlayerJumpEnd(moveIndex: number){
+        //update steps label
+        if(this.stepsLabel) {
+            this.stepsLabel.string = '' + (moveIndex >= this.roadLength ? this.roadLength : moveIndex);
+        }
+        this.checkResult(moveIndex);
+    }
+
+    checkResult(moveIndex: number){
+        if(moveIndex < this.roadLength) {
+            if( this._road[moveIndex] == BlockType.BT_NONE){
+                this.setCurState(GameState.GS_INIT);
+            }
+        }else { 
+            //ra khoi map choi, bat dau lai init
+            this.setCurState(GameState.GS_INIT);
+        }
     }
 }
 
